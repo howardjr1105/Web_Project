@@ -135,10 +135,10 @@ const Dashboard = () => {
 
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-green-600">
                         {account.number}
                       </span>
-                      <FiCopy className="w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600" />
+                      <FiCopy className="w-4 h-4 text-green-600 cursor-pointer hover:text-gray-600" />
                     </div>
 
                     <div className="flex items-center gap-2">

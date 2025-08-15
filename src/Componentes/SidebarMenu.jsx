@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import bancoLogo from "../assets/Logo_v.svg";
 import {
   FaExchangeAlt,
@@ -10,18 +11,24 @@ import {
 import { HiArrowsRightLeft } from "react-icons/hi2";
 
 const menuItems = [
-  { label: "Tablero", icon: <FaListAlt /> },
-  { label: "Transferir", icon: <FaExchangeAlt /> },
-  { label: "Pagar", icon: <FaMoneyCheckAlt /> },
-  { label: "Mis transacciones", icon: <FaWallet /> },
-  { label: "Gestionar", icon: <FaCog /> },
-  { label: "Cheques", icon: <FaMoneyCheckAlt /> },
-  { label: "Administrar", icon: <FaCog /> },
-  { label: "Ahorro automático", icon: <FaWallet /> },
-  { label: "Configuración", icon: <FaCog /> },
+  { label: "Tablero", icon: <FaListAlt />, path: "/" },
+  { label: "Transferir", icon: <FaExchangeAlt />, path: "/transfer" },
+  { label: "Pagar", icon: <FaMoneyCheckAlt />, path: "/pagar" },
+  { label: "Mis transacciones", icon: <FaWallet />, path: "/transacciones" },
+  { label: "Gestionar", icon: <FaCog />, path: "/gestionar" },
+  { label: "Cheques", icon: <FaMoneyCheckAlt />, path: "/cheques" },
+  { label: "Administrar", icon: <FaCog />, path: "/administrar" },
+  { label: "Ahorro automático", icon: <FaWallet />, path: "/ahorro" },
+  { label: "Configuración", icon: <FaCog />, path: "/configuracion" },
 ];
 
 export default function SidebarMenu({ activePage = "Tablero" }) {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div className="h-screen m-0 p-0">
       <aside className="hidden lg:flex lg:w-64 h-screen bg-white text-black flex-col shadow-md">
@@ -35,6 +42,7 @@ export default function SidebarMenu({ activePage = "Tablero" }) {
               return (
                 <button
                   key={index}
+                  onClick={() => handleNavigation(item.path)}
                   className={`flex items-center pl-4 py-1.5 gap-2 rounded hover:bg-gray-100 transition w-full text-left text-sm ${
                     isActive ? 'text-green-600' : 'text-black'
                   }`}
