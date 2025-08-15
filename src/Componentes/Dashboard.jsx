@@ -93,7 +93,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 ml-3">
                 <div className="text-2xl font-mono tracking-wider">
                   {card.number}
                 </div>

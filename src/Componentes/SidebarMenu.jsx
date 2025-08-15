@@ -21,7 +21,7 @@ const menuItems = [
   { label: "Configuración", icon: <FaCog /> },
 ];
 
-export default function SidebarMenu() {
+export default function SidebarMenu({ activePage = "Tablero" }) {
   return (
     <div className="h-screen m-0 p-0">
       <aside className="hidden lg:flex lg:w-64 h-screen bg-white text-black flex-col shadow-md">
@@ -30,15 +30,20 @@ export default function SidebarMenu() {
             <img src={bancoLogo} alt="Banco Lafise" className="w-60 mb-2 px-2" />
           </div>
           <nav className="flex-1 space-y-1 px-2">
-            {menuItems.map((item, index) => (
-              <button
-                key={index}
-                className="flex items-center pl-4 py-1.5 gap-2 rounded hover:bg-gray-100 transition w-full text-left text-sm"
-              >
-                <span className="text-base">{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
-            ))}
+            {menuItems.map((item, index) => {
+              const isActive = item.label === activePage;
+              return (
+                <button
+                  key={index}
+                  className={`flex items-center pl-4 py-1.5 gap-2 rounded hover:bg-gray-100 transition w-full text-left text-sm ${
+                    isActive ? 'text-green-600' : 'text-black'
+                  }`}
+                >
+                  <span className="text-base">{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </nav>
         </div>
 
