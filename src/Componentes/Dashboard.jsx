@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FiCopy, FiEye, FiEyeOff } from "react-icons/fi";
-import bancoLogo from "../assets/Logo_b.svg";
 import { fetchUserData, fetchAllAccountsData, fetchAllTransactions } from "../services/apiService";
+import Card from "./Card";
+import AccountCard from "./AccountCard";
 
 const Dashboard = ({ userId = "1" }) => {
   const [showBalance, setShowBalance] = useState(true);
@@ -18,7 +18,6 @@ const Dashboard = ({ userId = "1" }) => {
       holder: userData?.full_name || "Mike Smith",
       expiry: "06/22",
       type: "green",
-      gradient: "from-green-600 to-green-800",
     },
     {
       id: 2,
@@ -26,7 +25,6 @@ const Dashboard = ({ userId = "1" }) => {
       holder: userData?.full_name || "Mike Smith",
       expiry: "09/24",
       type: "blue",
-      gradient: "from-blue-900 to-blue-700",
     },
     {
       id: 3,
@@ -34,7 +32,6 @@ const Dashboard = ({ userId = "1" }) => {
       holder: userData?.full_name || "Mike Smith",
       expiry: "09/24",
       type: "black",
-      gradient: "from-gray-800 to-gray-900",
     },
   ];
 
@@ -105,33 +102,13 @@ const Dashboard = ({ userId = "1" }) => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {cards.map((card) => (
-            <div
+            <Card
               key={card.id}
-              className={`bg-gradient-to-br ${card.gradient} rounded-xl p-6 text-white relative overflow-hidden`}
-            >
-              <div className="flex justify-between items-start mb-8">
-                <div className="w-30 h-8 rounded flex items-center justify-center">
-                <img src={bancoLogo} alt="Banco Lafise" className="w-100 " />
-                </div>
-              </div>
-
-              <div className="space-y-4 ml-3">
-                <div className="text-2xl font-mono tracking-wider">
-                  {card.number}
-                </div>
-
-                <div className="flex justify-between items-end">
-                  <div>
-                    <div className="text-xs opacity-75">Card Holder</div>
-                    <div className="font-semibold">{card.holder}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs opacity-75">Expires</div>
-                    <div className="font-semibold">{card.expiry}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              type={card.type}
+              number={card.number}
+              holder={card.holder}
+              expiry={card.expiry}
+            />
           ))}
         </div>
       </div>
@@ -143,42 +120,15 @@ const Dashboard = ({ userId = "1" }) => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {accounts.map((account, index) => (
-                <div
+                <AccountCard
                   key={index}
-                  className="bg-white rounded-lg p-6 shadow-sm border"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-gray-800">
-                      {account.type}
-                    </h3>
-                    <span className="text-2xl">{account.flag}</span>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-green-600">
-                        {account.number}
-                      </span>
-                      <FiCopy className="w-4 h-4 text-green-600 cursor-pointer hover:text-gray-600" />
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-gray-800">
-                        {showBalance ? account.balance : "••••••"}
-                      </span>
-                      <button
-                        onClick={() => setShowBalance(!showBalance)}
-                        className="text-gray-400 hover:text-gray-600"
-                      >
-                        {showBalance ? (
-                          <FiEyeOff className="w-4 h-4" />
-                        ) : (
-                          <FiEye className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  type={account.type}
+                  flag={account.flag}
+                  number={account.number}
+                  balance={account.balance}
+                  showBalance={showBalance}
+                  onToggleShowBalance={() => setShowBalance(!showBalance)}
+                />
               ))}
             </div>
           </div>
@@ -193,11 +143,11 @@ const Dashboard = ({ userId = "1" }) => {
               </button>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+            <div className="bg-white rounded-lg shadow-lg border border-gray-400 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50">
-                    <tr>
+                    <tr className="border-b border-gray-300">
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Fecha
                       </th>
@@ -228,14 +178,14 @@ const Dashboard = ({ userId = "1" }) => {
                       const amountPrefix = isCredit ? '+' : '-';
 
                       return (
-                        <tr key={transaction.transaction_number} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr key={transaction.transaction_number} className="hover:bg-gray-50 border-b border-gray-400">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ">
                             {formatDate(transaction.transaction_date)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ">
                             {transaction.description || transaction.bank_description}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               isCredit 
                                 ? 'bg-green-100 text-green-800' 
