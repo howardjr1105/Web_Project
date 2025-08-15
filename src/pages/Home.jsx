@@ -6,7 +6,7 @@ import { fetchUserData } from "../services/apiService";
 
 const Home = () => {
   const [userData, setUserData] = useState(null);
-  const userId = "1"; // You can make this dynamic based on authentication
+  const userId = "1";
 
   useEffect(() => {
     const loadUserData = async () => {

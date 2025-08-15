@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FiCopy, FiEye, FiEyeOff } from "react-icons/fi";
 import bancoLogo from "../assets/Logo_b.svg";
-import { fetchUserData, fetchAllAccountsData } from "../services/apiService";
+import { fetchUserData, fetchAllAccountsData, fetchAllTransactions } from "../services/apiService";
 
 const Dashboard = ({ userId = "1" }) => {
   const [showBalance, setShowBalance] = useState(true);
   const [userData, setUserData] = useState(null);
   const [accounts, setAccounts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -43,15 +44,12 @@ const Dashboard = ({ userId = "1" }) => {
         setLoading(true);
         setError(null);
         
-        // Fetch user data
         const user = await fetchUserData(userId);
         setUserData(user);
-        
-        // Fetch account details for all user products
+
         if (user.products && user.products.length > 0) {
           const accountsData = await fetchAllAccountsData(user.products);
           
-          // Transform account data to match the component format
           const formattedAccounts = accountsData.map(account => ({
             type: account.alias,
             number: account.account_number.toString(),
@@ -61,12 +59,16 @@ const Dashboard = ({ userId = "1" }) => {
             currency: account.currency
           }));
           
-          // Remove duplicates based on account number
           const uniqueAccounts = formattedAccounts.filter((account, index, self) =>
             index === self.findIndex(a => a.number === account.number)
           );
           
           setAccounts(uniqueAccounts);
+          
+          if (accountsData.length > 0) {
+            const transactionsData = await fetchAllTransactions(accountsData);
+            setTransactions(transactionsData);
+          }
         }
       } catch (err) {
         setError(err.message);
@@ -78,27 +80,6 @@ const Dashboard = ({ userId = "1" }) => {
 
     loadUserData();
   }, [userId]);
-
-  const transactions = [
-    {
-      date: "14/11/2021",
-      description: "Walmart",
-      debit: "320.00",
-      balance: "2,100",
-    },
-    {
-      date: "12/11/2021",
-      description: "Hugo Delivery",
-      debit: "12.45",
-      balance: "2,100",
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debit: "320.00",
-      balance: "2,100",
-    },
-  ];
 
   if (loading) {
     return (
@@ -155,7 +136,6 @@ const Dashboard = ({ userId = "1" }) => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="space-y-6">
           <div>
             <h2 className="text-xl font-semibold mb-4 text-gray-800">
@@ -225,30 +205,51 @@ const Dashboard = ({ userId = "1" }) => {
                         Descripción
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Débito USD
+                        Tipo
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Balance USD
+                        Monto
                       </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {transactions.map((transaction, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.date}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.description}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.debit}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {transaction.balance}
-                        </td>
-                      </tr>
-                    ))}
+                    {transactions.slice(0, 10).map((transaction, index) => {
+                      const formatDate = (dateString) => {
+                        const date = new Date(dateString);
+                        return date.toLocaleDateString('es-ES', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        });
+                      };
+
+                      const isCredit = transaction.transaction_type === 'Credit';
+                      const amountColor = isCredit ? 'text-green-600' : 'text-red-600';
+                      const amountPrefix = isCredit ? '+' : '-';
+
+                      return (
+                        <tr key={transaction.transaction_number} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {formatDate(transaction.transaction_date)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {transaction.description || transaction.bank_description}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              isCredit 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {transaction.transaction_type}
+                            </span>
+                          </td>
+                          <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${amountColor}`}>
+                            {amountPrefix}{transaction.amount.currency} {transaction.amount.value.toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
