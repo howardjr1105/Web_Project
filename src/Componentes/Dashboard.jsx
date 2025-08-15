@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FiCopy, FiEye, FiEyeOff } from "react-icons/fi";
-import { useState } from "react";
 import bancoLogo from "../assets/Logo_b.svg";
+import { fetchUserData, fetchAllAccountsData } from "../services/apiService";
 
-const Dashboard = () => {
+const Dashboard = ({ userId = "1" }) => {
   const [showBalance, setShowBalance] = useState(true);
+  const [userData, setUserData] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const cards = [
     {
       id: 1,
       number: "5325 •••• •••• 9033",
-      holder: "Mike Smith",
+      holder: userData?.full_name || "Mike Smith",
       expiry: "06/22",
       type: "green",
       gradient: "from-green-600 to-green-800",
@@ -18,7 +22,7 @@ const Dashboard = () => {
     {
       id: 2,
       number: "5789 •••• •••• 2847",
-      holder: "Mike Smith",
+      holder: userData?.full_name || "Mike Smith",
       expiry: "09/24",
       type: "blue",
       gradient: "from-blue-900 to-blue-700",
@@ -26,33 +30,54 @@ const Dashboard = () => {
     {
       id: 3,
       number: "4809 •••• •••• 2234",
-      holder: "Mike Smith",
+      holder: userData?.full_name || "Mike Smith",
       expiry: "09/24",
       type: "black",
       gradient: "from-gray-800 to-gray-900",
     },
   ];
 
-  const accounts = [
-    {
-      type: "NIO Cuenta",
-      number: "10234567",
-      balance: "C$ 38,456",
-      flag: "🇳🇮",
-    },
-    {
-      type: "USD Cuenta",
-      number: "10239849",
-      balance: "USD 22,380",
-      flag: "🇺🇸",
-    },
-    {
-      type: "USD Cuenta",
-      number: "10638567",
-      balance: "USD 12,400",
-      flag: "🇺🇸",
-    },
-  ];
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch user data
+        const user = await fetchUserData(userId);
+        setUserData(user);
+        
+        // Fetch account details for all user products
+        if (user.products && user.products.length > 0) {
+          const accountsData = await fetchAllAccountsData(user.products);
+          
+          // Transform account data to match the component format
+          const formattedAccounts = accountsData.map(account => ({
+            type: account.alias,
+            number: account.account_number.toString(),
+            balance: `${account.currency} ${account.balance.toLocaleString()}`,
+            flag: account.currency === "NIO" ? "🇳🇮" : "🇺🇸",
+            rawBalance: account.balance,
+            currency: account.currency
+          }));
+          
+          // Remove duplicates based on account number
+          const uniqueAccounts = formattedAccounts.filter((account, index, self) =>
+            index === self.findIndex(a => a.number === account.number)
+          );
+          
+          setAccounts(uniqueAccounts);
+        }
+      } catch (err) {
+        setError(err.message);
+        console.error('Error loading user data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [userId]);
 
   const transactions = [
     {
@@ -74,6 +99,22 @@ const Dashboard = () => {
       balance: "2,100",
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Cargando datos del usuario...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-lg text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

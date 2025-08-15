@@ -2,7 +2,7 @@ import React from "react";
 import { FaBars, FaBell } from "react-icons/fa";
 import profilePic from "../assets/perfil.svg";
 
-export default function TopBarMenu() {
+export default function TopBarMenu({ userProfilePhoto, userName }) {
   return (
     <header className="w-full h-16 bg-white shadow flex items-center justify-between px-4 lg:px-8 py-2">
       <button className="text-xl text-gray-700 hover:text-gray-900">
@@ -21,9 +21,12 @@ export default function TopBarMenu() {
         />
 
         <img
-          src={profilePic}
-          alt="Perfil"
+          src={userProfilePhoto || profilePic}
+          alt={userName || "Perfil"}
           className="w-10 h-10 rounded-full object-cover border border-gray-300"
+          onError={(e) => {
+            e.target.src = profilePic;
+          }}
         />
       </div>
     </header>
