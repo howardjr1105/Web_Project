@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaCheck } from "react-icons/fa";
 import { fetchUserData, fetchAllAccountsData } from "../services/apiService";
 
-const TransferStep1 = ({ userId = "1" }) => {
+const TransferStep1 = ({ userId = "1", onContinue }) => {
   const [formData, setFormData] = useState({
     originAccount: "",
   });
@@ -49,9 +49,10 @@ const TransferStep1 = ({ userId = "1" }) => {
   };
 
   const handleContinue = () => {
-    console.log("Form data:", formData);
+    if (formData.originAccount && onContinue) {
+      onContinue({ originAccount: formData.originAccount });
+    }
   };
-
 
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm">
@@ -139,7 +140,6 @@ const TransferStep1 = ({ userId = "1" }) => {
       </div>
 
       <div className="p-6 border-t border-gray-200 flex justify-end gap-4">
-        
         <button
           onClick={handleContinue}
           disabled={!formData.originAccount}
