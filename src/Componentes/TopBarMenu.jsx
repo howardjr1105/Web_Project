@@ -1,6 +1,5 @@
 import React from "react";
 import { FaBars, FaBell } from "react-icons/fa";
-import profilePic from "../assets/perfil.svg";
 
 export default function TopBarMenu({ userProfilePhoto, userName }) {
   return (
@@ -21,12 +20,10 @@ export default function TopBarMenu({ userProfilePhoto, userName }) {
         />
 
         <img
-          src={userProfilePhoto || profilePic}
+          src={userProfilePhoto}
           alt={userName || "Perfil"}
           className="w-10 h-10 rounded-full object-cover border border-gray-300"
-          onError={(e) => {
-            e.target.src = profilePic;
-          }}
+          
         />
       </div>
     </header>

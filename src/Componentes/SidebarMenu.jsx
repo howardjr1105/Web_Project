@@ -62,7 +62,7 @@ export default function SidebarMenu({ activePage = "Tablero" }) {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1 justify-between w-full">
                 <select className="text-xs border-gray-300 rounded px-1 py-0.5 bg-white p-6 h-8 w-20 shadow-sm">
-                    <option>Cordoba</option>
+                    <option>Cordobas</option>
                   </select>
                   <select className="text-xs border-gray-300 rounded px-1 py-0.5 bg-white p-6 h-8 w-20 shadow-sm">
                     <option>USD</option>

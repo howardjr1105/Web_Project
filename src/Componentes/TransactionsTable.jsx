@@ -1,83 +1,12 @@
 import React, { useState } from "react";
 
-const TransactionsTable = () => {
+const TransactionsTable = ({ transactions = [], loading = false, error = null }) => {
   const [activeTab, setActiveTab] = useState("Movimientos");
-
-  // Sample transaction data
-  const transactions = [
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    },
-    {
-      date: "14/Nov/2021",
-      description: "Walmart Carretera Masaya",
-      debitUSD: "320.00",
-      balanceUSD: "2,100"
-    }
-  ];
 
   const tabs = [
     { id: "Movimientos", label: "Movimientos", active: true },
     { id: "Estado", label: "Estado", active: false },
-    { id: "Detalle", label: "Detalle", active: false },
-    { id: "Fondo no Disponible", label: "Fondo no Disponible", active: false }
+    { id: "Detalle", label: "Detalle", active: false }
   ];
 
   return (
@@ -110,42 +39,64 @@ const TransactionsTable = () => {
       <div className="p-6">
         {activeTab === "Movimientos" && (
           <div className="overflow-x-auto">
+            {loading && (
+              <div className="py-8 text-center text-gray-500">Cargando transacciones...</div>
+            )}
+            {error && !loading && (
+              <div className="py-8 text-center text-red-600">Error: {error}</div>
+            )}
+            {!loading && !error && (
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Descripción
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Débito USD
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Balance USD
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((transaction, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {transaction.date}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {transaction.description}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                      {transaction.debitUSD}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                      {transaction.balanceUSD}
+                {transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                      No hay transacciones para mostrar.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  transactions.map((transaction) => {
+                    const isCredit = transaction.transaction_type === "Credit";
+                    const amountColor = isCredit ? "text-green-600" : "text-red-600";
+                    const amountPrefix = isCredit ? "+" : "-";
+                    const formatDate = (dateString) => {
+                      const date = new Date(dateString);
+                      return date.toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      });
+                    };
+                    return (
+                      <tr key={transaction.transaction_number} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatDate(transaction.transaction_date)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {transaction.description || transaction.bank_description}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {transaction.transaction_type}
+                        </td>
+                        <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${amountColor}`}>
+                          {amountPrefix}
+                          {transaction.amount?.currency} {Number(transaction.amount?.value || 0).toLocaleString()}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
+            )}
           </div>
         )}
 
