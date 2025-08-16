@@ -20,6 +20,8 @@ const Transfer = () => {
   const [motivo, setMotivo] = useState("");
   const [email, setEmail] = useState("");
   const [transaction, setTransaction] = useState(null);
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -52,7 +54,9 @@ const Transfer = () => {
   const handleStep4Complete = (data) => {
     if (data.transaction) {
       setTransaction(data.transaction);
+      // We'll handle the navigation in the Invoice component
     } else {
+      // If no transaction data, just navigate to home
       navigate("/");
     }
   };
@@ -65,14 +69,19 @@ const Transfer = () => {
     }
   };
 
-
   return (
     <div className="flex h-screen w-screen">
-      <SidebarMenu activePage="Transferir" />
+      <SidebarMenu
+        activePage="Transferir"
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <TopBarMenu 
-        userProfilePhoto={userData?.profile_photo}
-          userName={userData?.full_name}/>
+          userProfilePhoto={userData?.profile_photo}
+          userName={userData?.full_name}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
         <main className="flex-1 bg-gray-50 p-6">
           {currentStep === 1 && (
             <TransferStep1 

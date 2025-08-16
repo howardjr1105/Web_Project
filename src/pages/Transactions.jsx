@@ -10,6 +10,7 @@ const Transactions = () => {
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
   const userId = "1";
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,9 +39,13 @@ const Transactions = () => {
   }, [userId]);
   return (
     <div className="flex h-screen w-screen">
-      <SidebarMenu activePage="Mis transacciones" />
+      <SidebarMenu activePage="Mis transacciones" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex-1 flex flex-col overflow-y-auto">
-        <TopBarMenu userProfilePhoto={userData?.profile_photo} userName={userData?.full_name} />
+        <TopBarMenu
+          userProfilePhoto={userData?.profile_photo}
+          userName={userData?.full_name}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
         <main className="flex-1 bg-gray-50 p-6">
           <TransactionsTable transactions={transactions} loading={loading} error={error} />
         </main>

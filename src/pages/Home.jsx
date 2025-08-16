@@ -7,6 +7,7 @@ import { fetchUserData } from "../services/apiService";
 const Home = () => {
   const [userData, setUserData] = useState(null);
   const userId = "1";
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -23,11 +24,12 @@ const Home = () => {
 
   return (
     <div className="flex h-screen w-screen">
-      <SidebarMenu activePage="Tablero" />
+      <SidebarMenu activePage="Tablero" isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex-1 flex flex-col overflow-y-auto">
         <TopBarMenu 
           userProfilePhoto={userData?.profile_photo}
           userName={userData?.full_name}
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
         <main className="flex-1 bg-gray-50 p-6">
           <Dashboard userId={userId} />

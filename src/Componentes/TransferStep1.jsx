@@ -60,7 +60,7 @@ const TransferStep1 = ({ userId = "1", onComplete, onBack }) => {
         <h1 className="text-2xl font-semibold text-gray-900">Transferir</h1>
       </div>
 
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-3 border-b border-gray-200 flex justify-center">
         <div className="flex items-center justify-between max-w-2xl">
           <div className="flex flex-col items-center">
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mb-2">
