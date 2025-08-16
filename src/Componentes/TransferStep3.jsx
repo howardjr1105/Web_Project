@@ -21,7 +21,7 @@ const sanitizeAmountInput = (value) => {
   return v;
 };
 
-const TransferStep3 = ({ defaultValue = "", onBack, onContinue }) => {
+const TransferStep3 = ({ defaultValue = "", onBack, onComplete, originAccount, destinationAccount }) => {
   const [amount, setAmount] = useState(String(defaultValue));
   const [touched, setTouched] = useState(false);
 
@@ -38,7 +38,7 @@ const TransferStep3 = ({ defaultValue = "", onBack, onContinue }) => {
     if (!valid) return;
     const normalized = amount.replace(",", ".");
     const num = Number(normalized);
-    if (onContinue) onContinue({ amount: num });
+    if (onComplete) onComplete(num);
   };
 
   return (

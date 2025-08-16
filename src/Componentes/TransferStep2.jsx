@@ -6,7 +6,7 @@ const isValidAccountNumber = (value) => {
   return digitsOnly.test(value) && value.length >= 9 && value.length <= 12;
 };
 
-const TransferStep2 = ({ defaultValue = "", onBack, onContinue }) => {
+const TransferStep2 = ({ defaultValue = "", onBack, onComplete, originAccount }) => {
   const [destinationAccount, setDestinationAccount] = useState(defaultValue);
   const [touched, setTouched] = useState(false);
 
@@ -22,7 +22,7 @@ const TransferStep2 = ({ defaultValue = "", onBack, onContinue }) => {
   const showError = touched && destinationAccount !== "" && !valid;
 
   const handleContinue = () => {
-    if (valid && onContinue) onContinue({ destinationAccount });
+    if (valid && onComplete) onComplete(destinationAccount);
   };
 
   return (

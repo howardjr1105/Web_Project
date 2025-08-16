@@ -13,13 +13,13 @@ import { HiArrowsRightLeft } from "react-icons/hi2";
 const menuItems = [
   { label: "Tablero", icon: <FaListAlt />, path: "/" },
   { label: "Transferir", icon: <FaExchangeAlt />, path: "/transfer" },
-  { label: "Pagar", icon: <FaMoneyCheckAlt />, path: "/pagar" },
+  { label: "Pagar", icon: <FaMoneyCheckAlt />, path: "/" },
   { label: "Mis transacciones", icon: <FaWallet />, path: "/transacciones" },
-  { label: "Gestionar", icon: <FaCog />, path: "/gestionar" },
-  { label: "Cheques", icon: <FaMoneyCheckAlt />, path: "/cheques" },
-  { label: "Administrar", icon: <FaCog />, path: "/administrar" },
-  { label: "Ahorro automático", icon: <FaWallet />, path: "/ahorro" },
-  { label: "Configuración", icon: <FaCog />, path: "/configuracion" },
+  { label: "Gestionar", icon: <FaCog />, path: "/" },
+  { label: "Cheques", icon: <FaMoneyCheckAlt />, path: "/" },
+  { label: "Administrar", icon: <FaCog />, path: "/" },
+  { label: "Ahorro automático", icon: <FaWallet />, path: "/" },
+  { label: "Configuración", icon: <FaCog />, path: "/" },
 ];
 
 export default function SidebarMenu({ activePage = "Tablero" }) {

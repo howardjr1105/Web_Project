@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SidebarMenu from "../Componentes/SidebarMenu";
 import TopBarMenu from "../Componentes/TopBarMenu";
 import TransferStep1 from "../Componentes/TransferStep1";
@@ -8,15 +9,17 @@ import TransferStep4 from "../Componentes/TransferStep4";
 import { fetchUserData } from "../services/apiService";
 
 const Transfer = () => {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const userId = "1";
 
-  const [step, setStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(1);
   const [originAccount, setOriginAccount] = useState("");
   const [destinationAccount, setDestinationAccount] = useState("");
   const [amount, setAmount] = useState("");
   const [motivo, setMotivo] = useState("");
   const [email, setEmail] = useState("");
+  const [transaction, setTransaction] = useState(null);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -30,6 +33,39 @@ const Transfer = () => {
 
     loadUserData();
   }, [userId]);
+
+  const handleStep1Complete = (selectedAccount) => {
+    setOriginAccount(selectedAccount);
+    setCurrentStep(2);
+  };
+
+  const handleStep2Complete = (accountNumber) => {
+    setDestinationAccount(accountNumber);
+    setCurrentStep(3);
+  };
+
+  const handleStep3Complete = (transferAmount) => {
+    setAmount(transferAmount);
+    setCurrentStep(4);
+  };
+
+  const handleStep4Complete = (data) => {
+    if (data.transaction) {
+      setTransaction(data.transaction);
+    } else {
+      navigate("/");
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    } else {
+      navigate(-1);
+    }
+  };
+
+
   return (
     <div className="flex h-screen w-screen">
       <SidebarMenu activePage="Transferir" />
@@ -38,48 +74,39 @@ const Transfer = () => {
         userProfilePhoto={userData?.profile_photo}
           userName={userData?.full_name}/>
         <main className="flex-1 bg-gray-50 p-6">
-          {step === 1 && (
+          {currentStep === 1 && (
             <TransferStep1 
               userId={userId}
-              onContinue={({ originAccount }) => {
-                setOriginAccount(originAccount);
-                setStep(2);
-              }}
+              onComplete={handleStep1Complete}
+              onBack={handleBack}
             />
           )}
-          {step === 2 && (
+          {currentStep === 2 && (
             <TransferStep2
               defaultValue={destinationAccount}
-              onBack={() => setStep(1)}
-              onContinue={({ destinationAccount }) => {
-                setDestinationAccount(destinationAccount);
-                setStep(3);
-              }}
+              onComplete={handleStep2Complete}
+              onBack={handleBack}
+              originAccount={originAccount}
             />
           )}
-          {step === 3 && (
+          {currentStep === 3 && (
             <TransferStep3
               defaultValue={amount}
-              onBack={() => setStep(2)}
-              onContinue={({ amount }) => {
-                setAmount(amount);
-                setStep(4);
-              }}
+              onComplete={handleStep3Complete}
+              onBack={handleBack}
+              originAccount={originAccount}
+              destinationAccount={destinationAccount}
             />
           )}
-          {step === 4 && (
+          {currentStep === 4 && (
             <TransferStep4
               originAccount={originAccount}
               destinationAccount={destinationAccount}
               amount={amount}
               defaultMotivo={motivo}
               defaultEmail={email}
-              onBack={() => setStep(3)}
-              onContinue={({ motivo, email }) => {
-                setMotivo(motivo);
-                setEmail(email);
-                // TODO: Confirm/submit transfer step here
-              }}
+              onBack={handleBack}
+              onComplete={handleStep4Complete}
             />
           )}
         </main>
