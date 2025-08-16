@@ -4,6 +4,7 @@ import TopBarMenu from "../Componentes/TopBarMenu";
 import TransferStep1 from "../Componentes/TransferStep1";
 import TransferStep2 from "../Componentes/TransferStep2";
 import TransferStep3 from "../Componentes/TransferStep3";
+import TransferStep4 from "../Componentes/TransferStep4";
 import { fetchUserData } from "../services/apiService";
 
 const Transfer = () => {
@@ -14,6 +15,8 @@ const Transfer = () => {
   const [originAccount, setOriginAccount] = useState("");
   const [destinationAccount, setDestinationAccount] = useState("");
   const [amount, setAmount] = useState("");
+  const [motivo, setMotivo] = useState("");
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -60,7 +63,22 @@ const Transfer = () => {
               onBack={() => setStep(2)}
               onContinue={({ amount }) => {
                 setAmount(amount);
-                // TODO: proceed to Step 4 component when available
+                setStep(4);
+              }}
+            />
+          )}
+          {step === 4 && (
+            <TransferStep4
+              originAccount={originAccount}
+              destinationAccount={destinationAccount}
+              amount={amount}
+              defaultMotivo={motivo}
+              defaultEmail={email}
+              onBack={() => setStep(3)}
+              onContinue={({ motivo, email }) => {
+                setMotivo(motivo);
+                setEmail(email);
+                // TODO: Confirm/submit transfer step here
               }}
             />
           )}
