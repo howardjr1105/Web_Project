@@ -3,6 +3,7 @@ import SidebarMenu from "../Componentes/SidebarMenu";
 import TopBarMenu from "../Componentes/TopBarMenu";
 import TransferStep1 from "../Componentes/TransferStep1";
 import TransferStep2 from "../Componentes/TransferStep2";
+import TransferStep3 from "../Componentes/TransferStep3";
 import { fetchUserData } from "../services/apiService";
 
 const Transfer = () => {
@@ -12,6 +13,7 @@ const Transfer = () => {
   const [step, setStep] = useState(1);
   const [originAccount, setOriginAccount] = useState("");
   const [destinationAccount, setDestinationAccount] = useState("");
+  const [amount, setAmount] = useState("");
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -48,7 +50,17 @@ const Transfer = () => {
               onBack={() => setStep(1)}
               onContinue={({ destinationAccount }) => {
                 setDestinationAccount(destinationAccount);
-                // TODO: proceed to Step 3 component when available
+                setStep(3);
+              }}
+            />
+          )}
+          {step === 3 && (
+            <TransferStep3
+              defaultValue={amount}
+              onBack={() => setStep(2)}
+              onContinue={({ amount }) => {
+                setAmount(amount);
+                // TODO: proceed to Step 4 component when available
               }}
             />
           )}
