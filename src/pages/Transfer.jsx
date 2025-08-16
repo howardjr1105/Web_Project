@@ -20,7 +20,6 @@ const Transfer = () => {
   const [motivo, setMotivo] = useState("");
   const [email, setEmail] = useState("");
   const [transaction, setTransaction] = useState(null);
-  // Mobile sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
